@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 WHITE = (255, 255, 255)
 
-class Player(pygame.sprite.Sprite)
+class Player(pygame.sprite.Sprite):
 
 	def __init__(self, color, width, height):
 
@@ -12,6 +12,5 @@ class Player(pygame.sprite.Sprite)
         self.image.fill(WHITE)
         self.image.set_colorkey(WHITE)
 
-        pygame.draw.rect(self.image, color, [0, 0, width, height])
-        
+        self.image = pygame.image.load("Things/Pictures/square.png")
         self.rect = self.image.get_rect()
