@@ -9,7 +9,9 @@ class Player(pygame.sprite.Sprite):
 	    super().__init__()
 
 	    self.image = pygame.Surface([width, height])
+	    
         self.image.fill(WHITE)
+
         self.image.set_colorkey(WHITE)
 
         self.image = pygame.image.load("Things/Pictures/square.png")
