@@ -1,92 +1,100 @@
-
 import pygame
-from pygame.locals import *
-from player import Player
 
-
-
-#Setting up The Game
-#test
-   
 pygame.init()
-screen=pygame.display.set_mode((1000,1000),HWSURFACE|DOUBLEBUF|RESIZABLE)
+
+display_width = 800
+display_height = 600
+
+gameDisplay = pygame.display.set_mode((1000,1000))
+pygame.display.set_caption('Meme Shooter')
+
 black = (0,0,0)
 white = (255,255,255)
-red = (255,0,0)
-keys = [False, False, False, False]
-playerpos=[100,50]
-pygame.display.set_caption('MemeShooter')
 
-#Background Music
+player_width = 73
 
 pygame.mixer.init()
 pygame.mixer.music.load("Things/Sounds/soviet-anthem.mp3")
 pygame.mixer.music.play(-1,0.0)
 
-all_sprites_list = pygame.sprite.Group()
+clock = pygame.time.Clock()
+playerImg = pygame.image.load('Things/Pictures/josephstalin.png')
 
+def things(thingx, thingy, thingw, thingh, color):
+    pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
 
-playerPlayer = Player(RED, 20, 30)
-playerPlayer.rect.x = 200
-playerPlayer.rect.y = 300
+def player(x,y):
+    gameDisplay.blit(playerImg, (x,y))
 
-all_sprites_list.add(playerPlayer)
+def text_objects(text, font):
+    textSurface = font.render(text, True, black)
+    return textSurface, textSurface.get_rect()
 
-door = pygame.image.load("Things/Pictures/cave.jpg")
+def message_display(text):
+    largeText = pygame.font.Font('Things/Fonts/FreeSansBold.ttf',115)
+    TextSurf, TextRect = text_objects(text, largeText)
+    TextRect.center = ((display_width/2),(display_height/2))
+    gameDisplay.blit(TextSurf, TextRect)
 
-start = pygame.image.load("Things/Pictures/start.jpg")
+    pygame.display.update()
 
-#The plan is to have the player "enter the doorway" and start the game.
+    time.sleep(2)
 
+    game_loop()
+    
+def crash():
+    message_display('You Died')
 
-while 1:
-	#Screen Images
-    screen.fill(0)
-    screen.blit(player, playerpos)
-    screen.blit(door,(685,800))
-    screen.blit(start,(750,600))
-    pygame.display.flip()
-    #Exit Button
+x =  (display_width * 0.60)
+y = (display_height * 1.2)
+
+x_change = 0
+
+thing_startx = random.randrange(0, display_width)
+thing_starty = -600
+thing_speed = 7
+thing_width = 100
+thing_height = 100
+
+gameExit = False
+
+while not gameExit:
     for event in pygame.event.get():
-      if event.type==pygame.QUIT: 
-            pygame.quit() 
-            exit(0)  
+        if event.type == pygame.QUIT:
+            python.quit()
+            quit()
 
-    all_sprites_list.update()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                x_change = -25
+            elif event.key == pygame.K_RIGHT:
+                x_change = 25
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                x_change = 00
 
-    screen.fill(BLACK)
+    x += x_change 
 
-    all_sprites_list.draw(screen)
+    gameDisplay.fill(white)
 
-    #Player Movements
-    if event.type == pygame.KEYDOWN:
-          if event.key==pygame.K_UP:
-              keys[0]=True
-          elif event.key==pygame.K_LEFT:
-              keys[1]=True
-          elif event.key==pygame.K_DOWN:
-              keys[2]=True
-          elif event.key==pygame.K_RIGHT:
-              keys[3]=True
 
-    if event.type == pygame.KEYUP:
-          if event.key==pygame.K_UP:
-              keys[0]=False
-          elif event.key==pygame.K_LEFT:
-              keys[1]=False
-          elif event.key==pygame.K_DOWN:
-              keys[2]=False
-          elif event.key==pygame.K_RIGHT:
-              keys[3]=False
-  
+    things(thing_startx, thing_starty, thing_width, thing_height, black)
+    thing_starty += thing_speed
+    player(x,y)
 
-    if keys[0]:
-          playerpos[1]-=50
-    elif keys[2]:
-          playerpos[1]+=50
-    elif keys[1]:
-          playerpos[0]-=50
-    elif keys[3]:
-          playerpos[0]+=50  	    	
-             
+    if x > display_width - player_width or x < 0:
+        crash()
+
+    if y < thing_starty+thing_height:
+            print('y crossover')
+
+    if x > thing_startx and x < thing_startx + thing_width or x+car_width > thing_startx and x + car_width < thing_startx+thing_width:
+            print('x crossover')
+            crash()
+      
+    pygame.display.update()
+    clock.tick(60)
+
+pygame.quit()
+quit()
            
