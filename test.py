@@ -4,6 +4,7 @@ from pygame.locals import *
 
 
 #Setting up The Game
+#test
    
 pygame.init()
 screen=pygame.display.set_mode((1000,1000),HWSURFACE|DOUBLEBUF|RESIZABLE)
@@ -21,6 +22,8 @@ pygame.mixer.music.load("Things/Sounds/soviet-anthem.mp3")
 pygame.mixer.music.play(-1,0.0)
 
 #Variable Stating
+
+class
 
 player = pygame.image.load("Things/Pictures/square.png")
 
