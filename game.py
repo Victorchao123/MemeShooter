@@ -59,34 +59,34 @@ while 1:
     all_sprites_list.draw(screen)
 
     #Player Movements
-      if event.type == pygame.KEYDOWN:
-           if event.key==pygame.K_UP:
-               keys[0]=True
-           elif event.key==pygame.K_LEFT:
-               keys[1]=True
-           elif event.key==pygame.K_DOWN:
-               keys[2]=True
-           elif event.key==pygame.K_RIGHT:
-               keys[3]=True
+    if event.type == pygame.KEYDOWN:
+          if event.key==pygame.K_UP:
+              keys[0]=True
+          elif event.key==pygame.K_LEFT:
+              keys[1]=True
+          elif event.key==pygame.K_DOWN:
+              keys[2]=True
+          elif event.key==pygame.K_RIGHT:
+              keys[3]=True
 
-      if event.type == pygame.KEYUP:
-            if event.key==pygame.K_UP:
-                keys[0]=False
-            elif event.key==pygame.K_LEFT:
-                keys[1]=False
-            elif event.key==pygame.K_DOWN:
-                keys[2]=False
-            elif event.key==pygame.K_RIGHT:
-                keys[3]=False
+    if event.type == pygame.KEYUP:
+          if event.key==pygame.K_UP:
+              keys[0]=False
+          elif event.key==pygame.K_LEFT:
+              keys[1]=False
+          elif event.key==pygame.K_DOWN:
+              keys[2]=False
+          elif event.key==pygame.K_RIGHT:
+              keys[3]=False
   
 
-      if keys[0]:
-           playerpos[1]-=50
-      elif keys[2]:
-           playerpos[1]+=50
-      elif keys[1]:
-           playerpos[0]-=50
-      elif keys[3]:
-           playerpos[0]+=50  	    	
+    if keys[0]:
+          playerpos[1]-=50
+    elif keys[2]:
+          playerpos[1]+=50
+    elif keys[1]:
+          playerpos[0]-=50
+    elif keys[3]:
+          playerpos[0]+=50  	    	
              
            
