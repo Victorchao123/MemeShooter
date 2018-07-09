@@ -1,6 +1,8 @@
 
 import pygame
 from pygame.locals import *
+from player import Player
+
 
 
 #Setting up The Game
@@ -13,7 +15,7 @@ white = (255,255,255)
 red = (255,0,0)
 keys = [False, False, False, False]
 playerpos=[100,50]
-pygame.display.set_caption('Game Test')
+pygame.display.set_caption('MemeShooter')
 
 #Background Music
 
@@ -21,11 +23,14 @@ pygame.mixer.init()
 pygame.mixer.music.load("Things/Sounds/soviet-anthem.mp3")
 pygame.mixer.music.play(-1,0.0)
 
-#Variable Stating
+all_sprites_list = pygame.sprite.Group()
 
-class
 
-player = pygame.image.load("Things/Pictures/square.png")
+playerPlayer = Player(RED, 20, 30)
+playerPlayer.rect.x = 200
+playerPlayer.rect.y = 300
+
+all_sprites_list.add(playerPlayer)
 
 door = pygame.image.load("Things/Pictures/cave.jpg")
 
@@ -46,6 +51,12 @@ while 1:
       if event.type==pygame.QUIT: 
             pygame.quit() 
             exit(0)  
+
+all_sprites_list.update()
+
+screen.fill(BLACK)
+
+all_sprites_list.draw(screen)
 
     #Player Movements
       if event.type == pygame.KEYDOWN:
