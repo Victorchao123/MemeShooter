@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 
 
+#Setting up The Game
    
 pygame.init()
 screen=pygame.display.set_mode((1000,1000),HWSURFACE|DOUBLEBUF|RESIZABLE)
@@ -13,40 +14,37 @@ keys = [False, False, False, False]
 playerpos=[100,50]
 pygame.display.set_caption('Game Test')
 
+#Background Music
+
 pygame.mixer.init()
 pygame.mixer.music.load("Things/Sounds/soviet-anthem.mp3")
 pygame.mixer.music.play(-1,0.0)
 
-class Player:
-def __init__(self,displayw,displayh):
-           self.dw = displayw
-           self.dh = displayh
-           self.Main()
+#Variable Stating
 
-def Main(self):
-     player = pygame.image.load("Things/Pictures/square.png")
-
-
-
-
+player = pygame.image.load("Things/Pictures/square.png")
 
 door = pygame.image.load("Things/Pictures/cave.jpg")
 
 start = pygame.image.load("Things/Pictures/start.jpg")
 
+#The plan is to have the player "enter the doorway" and start the game.
+
 
 while 1:
+	#Screen Images
     screen.fill(0)
     screen.blit(player, playerpos)
     screen.blit(door,(685,800))
     screen.blit(start,(750,600))
     pygame.display.flip()
+    #Exit Button
     for event in pygame.event.get():
       if event.type==pygame.QUIT: 
             pygame.quit() 
             exit(0)  
 
-    
+    #Player Movements
       if event.type == pygame.KEYDOWN:
            if event.key==pygame.K_UP:
                keys[0]=True
