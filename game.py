@@ -52,11 +52,11 @@ while 1:
             pygame.quit() 
             exit(0)  
 
-all_sprites_list.update()
+    all_sprites_list.update()
 
-screen.fill(BLACK)
+    screen.fill(BLACK)
 
-all_sprites_list.draw(screen)
+    all_sprites_list.draw(screen)
 
     #Player Movements
       if event.type == pygame.KEYDOWN:
