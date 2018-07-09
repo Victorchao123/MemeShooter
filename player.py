@@ -12,5 +12,6 @@ class Player(pygame.sprite.Sprite)
         self.image.fill(WHITE)
         self.image.set_colorkey(WHITE)
 
-        self.image = pygame.image.load("Things/Pictures/square.png")
+        pygame.draw.rect(self.image, color, [0, 0, width, height])
+        
         self.rect = self.image.get_rect()
