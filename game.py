@@ -45,6 +45,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = HEIGHT - 10
         self.speedx = 0
         self.speedy = 0
+        self.shoot_delay = 250
+        self.last_shot = pygame.time.get_ticks()
 
     def update(self):
         self.speedx = 0
@@ -58,6 +60,8 @@ class Player(pygame.sprite.Sprite):
             self.speedy = -5
         if keystate[pygame.K_s]:
             self.speedy = 5 
+        if keystate[pygame.K_SPACE]:
+            self.shoot()
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
@@ -74,9 +78,12 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
 
     def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.top)
-        all_sprites.add(bullet)
-        bullets.add(bullet)
+        now = pygame.time.get_ticks()
+        if now - self.last_shot > self.shoot_delay: 
+            self.last_shot = now
+            bullet = Bullet(self.rect.centerx, self.rect.top)
+            all_sprites.add(bullet)
+            bullets.add(bullet)
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -110,11 +117,38 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, center, size):
+        pygame.sprite.Sprite.__init__(self)
+        self.size = size
+        self.image = explosion
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 0
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 50 
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame += 1
+            if now - self.last_update > self.frame_rate:
+                self.kill()
+            else:
+                center = self.rect.center
+                self.image = explosion
+                self.rect = self.image.get_rect()
+                self.rect.center = center
+
 background = pygame.image.load("Things/Pictures/flavourtown.jpg")
 
 kill_sound = pygame.mixer.Sound("Things/Sounds/Blyat.wav")
 
 shoot_sound = pygame.mixer.Sound("Things/Sounds/gun.wav")
+
+explosion = pygame.image.load("Things/Pictures/explosion.png")
+
 
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
@@ -150,6 +184,9 @@ while running:
         score += 1
         m = Mob()
         all_sprites.add(m)
+        expl = Explosion(hit.rect.center, 'lg')
+        all_sprites.add(expl)
+        all_sprites.update()
         mobs.add(m)
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
