@@ -23,10 +23,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Meme Shooter")
 clock = pygame.time.Clock()
 
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((75, 125))
+        self.image = pygame.Surface((43, 68))
         self.image = pygame.image.load("Things/Pictures/josephstalin.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
@@ -64,7 +65,7 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((90, 90))
+        self.image = pygame.Surface((80, 80))
         self.image = pygame.image.load("Things/Pictures/knuckles.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(WIDTH - self.rect.width)
@@ -77,6 +78,9 @@ class Mob(pygame.sprite.Sprite):
             self.rect.x = random.randrange(WIDTH - self.rect.width)
             self.rect.y = random.randrange(-100, -40)
             self.speedy = random.randrange(3, 9)
+
+class Bullet(pygame.sprite.Sprite)
+
 
 
     
@@ -103,6 +107,13 @@ while running:
             running = False
 
     all_sprites.update()
+
+
+
+    hits = pygame.sprite.spritecollide(player, mobs, False)
+    if hits:
+        running = False
+        
 
 
     screen.fill(BLACK)
