@@ -1,100 +1,113 @@
+
 import pygame
+import random
 
-pygame.init()
+WIDTH = 600
+HEIGHT = 720
+FPS = 60
 
-display_width = 800
-display_height = 600
 
-gameDisplay = pygame.display.set_mode((1000,1000))
-pygame.display.set_caption('Meme Shooter')
-
-black = (0,0,0)
-white = (255,255,255)
-
-player_width = 73
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
 pygame.mixer.init()
 pygame.mixer.music.load("Things/Sounds/soviet-anthem.mp3")
 pygame.mixer.music.play(-1,0.0)
 
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Meme Shooter")
 clock = pygame.time.Clock()
-playerImg = pygame.image.load('Things/Pictures/josephstalin.png')
 
-def things(thingx, thingy, thingw, thingh, color):
-    pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((75, 125))
+        self.image = pygame.image.load("Things/Pictures/josephstalin.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH / 2
+        self.rect.bottom = HEIGHT - 10
+        self.speedx = 0
+        self.speedy = 0
 
-def player(x,y):
-    gameDisplay.blit(playerImg, (x,y))
+    def update(self):
+        self.speedx = 0
+        self.speedy = 0
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_LEFT]:
+            self.speedx = -5
+        if keystate[pygame.K_RIGHT]:
+            self.speedx = 5
+        if keystate[pygame.K_UP]:
+            self.speedy = -5
+        if keystate[pygame.K_DOWN]:
+            self.speedy = 5 
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
 
-def text_objects(text, font):
-    textSurface = font.render(text, True, black)
-    return textSurface, textSurface.get_rect()
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
 
-def message_display(text):
-    largeText = pygame.font.Font('Things/Fonts/FreeSansBold.ttf',115)
-    TextSurf, TextRect = text_objects(text, largeText)
-    TextRect.center = ((display_width/2),(display_height/2))
-    gameDisplay.blit(TextSurf, TextRect)
+        if self.rect.left < 0:
+            self.rect.left = 0
 
-    pygame.display.update()
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
 
-    time.sleep(2)
+        if self.rect.top < 0:
+            self.rect.top = 0
 
-    game_loop()
+class Mob(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((90, 90))
+        self.image = pygame.image.load("Things/Pictures/knuckles.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-100, -40)
+        self.speedy = random.randrange(3, 9)
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.top > HEIGHT + 10:
+            self.rect.x = random.randrange(WIDTH - self.rect.width)
+            self.rect.y = random.randrange(-100, -40)
+            self.speedy = random.randrange(3, 9)
+
+
     
-def crash():
-    message_display('You Died')
 
-x =  (display_width * 0.60)
-y = (display_height * 1.2)
 
-x_change = 0
 
-thing_startx = random.randrange(0, display_width)
-thing_starty = -600
-thing_speed = 7
-thing_width = 100
-thing_height = 100
+all_sprites = pygame.sprite.Group()
+mobs = pygame.sprite.Group()
+player = Player()
+all_sprites.add(player)
+for i in range(10):
+    m = Mob()
+    all_sprites.add(m)
+    mobs.add(m)
 
-gameExit = False
+running = True
+while running:
 
-while not gameExit:
+    clock.tick(FPS)
+
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
-            python.quit()
-            quit()
+            running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                x_change = -25
-            elif event.key == pygame.K_RIGHT:
-                x_change = 25
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                x_change = 00
-
-    x += x_change 
-
-    gameDisplay.fill(white)
+    all_sprites.update()
 
 
-    things(thing_startx, thing_starty, thing_width, thing_height, black)
-    thing_starty += thing_speed
-    player(x,y)
+    screen.fill(BLACK)
+    all_sprites.draw(screen)
 
-    if x > display_width - player_width or x < 0:
-        crash()
-
-    if y < thing_starty+thing_height:
-            print('y crossover')
-
-    if x > thing_startx and x < thing_startx + thing_width or x+car_width > thing_startx and x + car_width < thing_startx+thing_width:
-            print('x crossover')
-            crash()
-      
-    pygame.display.update()
-    clock.tick(60)
+    pygame.display.flip()
 
 pygame.quit()
-quit()
-           
