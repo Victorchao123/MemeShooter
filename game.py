@@ -26,6 +26,13 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Meme Shooter")
 clock = pygame.time.Clock()
 
+font_name = pygame.font.match_font('arial')
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
 
 
 class Player(pygame.sprite.Sprite):
@@ -105,16 +112,20 @@ class Bullet(pygame.sprite.Sprite):
 
 background = pygame.image.load("Things/Pictures/flavourtown.jpg")
 
+kill_sound = pygame.mixer.Sound("Things/Sounds/Blyat.wav")
+
+shoot_sound = pygame.mixer.Sound("Things/Sounds/gun.wav")
 
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
-for i in range(10):
+for i in range(6):
     m = Mob()
     all_sprites.add(m)
     mobs.add(m)
+score = 0
 
 running = True
 while running:
@@ -128,12 +139,15 @@ while running:
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
+                pygame.mixer.Sound.play(shoot_sound)
                 player.shoot()
 
     all_sprites.update()
 
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
+        pygame.mixer.Sound.play(kill_sound)
+        score += 1
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
@@ -147,6 +161,7 @@ while running:
     screen.fill(BLACK)
     screen.blit(background, [0, 0])
     all_sprites.draw(screen)
+    draw_text(screen, str(score), 50, WIDTH / 2, 10)
 
     pygame.display.flip()
 
