@@ -117,7 +117,28 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, center, size):
+        pygame.sprite.Sprite.__init__(self)
+        self.size = size
+        self.image = explosion
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 0
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 50 
 
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame += 1
+            self.kill()
+        else: 
+            center = self.rect.center
+            self.image = explosion
+            self.rect = self.image.get_rect()
+            self.rect.center = center
 
 background = pygame.image.load("Things/Pictures/flavourtown.jpg")
 
@@ -125,6 +146,7 @@ kill_sound = pygame.mixer.Sound("Things/Sounds/Blyat.wav")
 
 shoot_sound = pygame.mixer.Sound("Things/Sounds/gun.wav")
 
+explosion = pygame.image.load("Things/Pictures/Explosion.png")
 
 
 all_sprites = pygame.sprite.Group()
@@ -161,7 +183,9 @@ while running:
         score += 1
         m = Mob()
         all_sprites.add(m)
-
+        expl = Explosion(hit.rect.center, 'lg')
+        all_sprites.add(expl)
+        all_sprites.update()
         mobs.add(m)
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
