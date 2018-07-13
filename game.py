@@ -108,6 +108,26 @@ class Mob(pygame.sprite.Sprite):
         all_sprites.add(moblet)
         moblets.add(moblet)
 
+class Special(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((124, 124))
+        self.image = pygame.image.load("Things/Pictures/Capitalism.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-100, -40)
+        self.speedy = random.randrange(5, 10)
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.top > HEIGHT + 10:
+            self.rect.x = random.randrange(WIDTH - self.rect.width)
+            self.rect.y = random.randrange(-100, -40)
+            self.speedy = random.randrange(5, 10)
+
+    def die(self):
+        self.kill()
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -197,6 +217,7 @@ scream_sound = pygame.mixer.Sound("Things/Sounds/scream.wav")
 
 
 
+shield = 10
 
 
 game_over = True
@@ -209,10 +230,12 @@ while running:
         mobs = pygame.sprite.Group()
         bullets = pygame.sprite.Group()
         moblets = pygame.sprite.Group()
+        specials = pygame.sprite.Group()
         player = Player()
         all_sprites.add(player)
         for i in range(6):
             m = Mob()
+            s = Special()
             all_sprites.add(m)
             mobs.add(m)
        
@@ -236,6 +259,12 @@ while running:
     if score > 10:
         m.attack()
 
+    if score > 20:
+         for i in range(6):
+            all_sprites.add(s)
+            specials.add(s)
+
+
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
         pygame.mixer.Sound.play(kill_sound)
@@ -254,6 +283,19 @@ while running:
     hits = pygame.sprite.spritecollide(player, moblets, False)
     if hits:
         game_over = True
+
+    hits = pygame.sprite.groupcollide(specials, bullets, True, True)
+    if hits:
+        shield -= 1
+        if shield <= 0:
+            s.die()
+            all_sprites.update()
+
+    hits = pygame.sprite.spritecollide(player, specials, False)
+    if hits:
+        game_over = True
+
+
 
         
 
