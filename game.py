@@ -140,6 +140,28 @@ class Explosion(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = center
 
+def show_go_screen():
+    pygame.mixer.music.stop()
+    pygame.mixer.Sound.play(scream_sound)
+    screen.fill(BLACK)
+    draw_text(screen, "Meme Shooter", 64, WIDTH / 2, HEIGHT / 4)
+    draw_text(screen, "WASD to move, Space to shoot", 22, WIDTH / 2, HEIGHT / 2)
+    draw_text(screen, "Press any key to start", 18, WIDTH / 2, HEIGHT * 3 / 4)
+    pygame.display.flip()
+    waiting = True
+    while waiting: 
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                waiting = False 
+                pygame.mixer.init()
+                pygame.mixer.music.load("Things/Sounds/soviet-anthem.mp3")
+                pygame.mixer.music.play(-1,0.0)
+
+
+
 background = pygame.image.load("Things/Pictures/flavourtown.jpg")
 
 kill_sound = pygame.mixer.Sound("Things/Sounds/Blyat.wav")
@@ -148,20 +170,30 @@ shoot_sound = pygame.mixer.Sound("Things/Sounds/gun.wav")
 
 explosion = pygame.image.load("Things/Pictures/Explosion.png")
 
+start_screen = pygame.image.load("Things/Pictures/background2.jpg")
 
-all_sprites = pygame.sprite.Group()
-mobs = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
-player = Player()
-all_sprites.add(player)
-for i in range(6):
-    m = Mob()
-    all_sprites.add(m)
-    mobs.add(m)
-score = 0
+scream_sound = pygame.mixer.Sound("Things/Sounds/scream.wav")
 
+
+
+game_over = True
 running = True
 while running:
+    if game_over:
+        show_go_screen()
+        game_over = False
+        all_sprites = pygame.sprite.Group()
+        mobs = pygame.sprite.Group()
+        bullets = pygame.sprite.Group()
+        player = Player()
+        all_sprites.add(player)
+        for i in range(6):
+            m = Mob()
+            all_sprites.add(m)
+            mobs.add(m)
+       
+        score = 0
+
 
     clock.tick(FPS)
 
@@ -190,7 +222,8 @@ while running:
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
     if hits:
-        running = False
+        game_over = True
+
         
 
 
