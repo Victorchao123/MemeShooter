@@ -38,7 +38,7 @@ def draw_text(surf, text, size, x, y):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((43, 68))
+        self.image = pygame.Surface((35, 55))
         self.image = pygame.image.load("Things/Pictures/josephstalin.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
@@ -95,12 +95,18 @@ class Mob(pygame.sprite.Sprite):
         self.rect.y = random.randrange(-100, -40)
         self.speedy = random.randrange(3, 9)
 
+
     def update(self):
         self.rect.y += self.speedy
         if self.rect.top > HEIGHT + 10:
             self.rect.x = random.randrange(WIDTH - self.rect.width)
             self.rect.y = random.randrange(-100, -40)
             self.speedy = random.randrange(3, 9)
+
+    def attack(self):
+        moblet = Moblet(self.rect.centerx, self.rect.bottom)
+        all_sprites.add(moblet)
+        moblets.add(moblet)
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -140,6 +146,21 @@ class Explosion(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = center
 
+class Moblet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((12, 17))
+        self.image = pygame.image.load("Things/Pictures/monopolyman.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = 10
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.bottom > HEIGHT:
+            self.kill()
+
 def show_go_screen():
     pygame.mixer.music.stop()
     pygame.mixer.Sound.play(scream_sound)
@@ -176,6 +197,8 @@ scream_sound = pygame.mixer.Sound("Things/Sounds/scream.wav")
 
 
 
+
+
 game_over = True
 running = True
 while running:
@@ -185,6 +208,7 @@ while running:
         all_sprites = pygame.sprite.Group()
         mobs = pygame.sprite.Group()
         bullets = pygame.sprite.Group()
+        moblets = pygame.sprite.Group()
         player = Player()
         all_sprites.add(player)
         for i in range(6):
@@ -209,6 +233,9 @@ while running:
 
     all_sprites.update()
 
+    if score > 10:
+        m.attack()
+
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
         pygame.mixer.Sound.play(kill_sound)
@@ -221,6 +248,10 @@ while running:
         mobs.add(m)
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
+    if hits:
+        game_over = True
+
+    hits = pygame.sprite.spritecollide(player, moblets, False)
     if hits:
         game_over = True
 
