@@ -136,6 +136,12 @@ class Special(pygame.sprite.Sprite):
     def die(self):
         self.kill()
 
+    def kennedy(self):
+        moblet = Moblet(self.rect.centerx, self.rect.bottom)
+        all_sprites.add(moblet)
+        moblets.add(moblet)
+
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -216,7 +222,7 @@ class Moblet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((12, 17))
-        self.image = pygame.image.load("Things/Pictures/monopolyman.png").convert_alpha()
+        self.image = pygame.image.load("Things/Pictures/red.jpeg").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -283,9 +289,9 @@ while running:
         splashes = pygame.sprite.Group()
         player = Player()
         all_sprites.add(player)
+        s = Special()
         for i in range(6):
             m = Mob()
-            s = Special()
             all_sprites.add(m)
             mobs.add(m)
        
@@ -312,9 +318,11 @@ while running:
         m.attack()
 
     if score > 20:
-         for i in range(6):
             all_sprites.add(s)
             specials.add(s)
+            s.kennedy()
+
+
 
 
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
