@@ -85,6 +85,14 @@ class Player(pygame.sprite.Sprite):
             all_sprites.add(bullet)
             bullets.add(bullet)
 
+    def throw(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_shot > self.shoot_delay:
+            self.last_shot = now
+            hammer = Hammer(self.rect.centerx, self.rect.top)
+            all_sprites.add(hammer)
+            hammers.add(hammer)
+
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -143,6 +151,44 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
+class Hammer(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20, 20))
+        self.image = pygame.image.load("Things/Pictures/essentialoil.jpeg").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -5
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.bottom < 0:
+            self.kill()
+
+class Splash(pygame.sprite.Sprite):
+    def __init__(self, center, size):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((300, 300))
+        self.image = pygame.image.load("Things/Pictures/square.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 0
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 50
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame += 1
+            self.kill()
+        else:
+            center = self.rect.center
+            self.image = square
+            self.rect = self.image.get_rect()
+            self.rect.center = center 
+
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, center, size):
         pygame.sprite.Sprite.__init__(self)
@@ -186,7 +232,7 @@ def show_go_screen():
     pygame.mixer.Sound.play(scream_sound)
     screen.fill(BLACK)
     draw_text(screen, "Meme Shooter", 64, WIDTH / 2, HEIGHT / 4)
-    draw_text(screen, "WASD to move, Space to shoot", 22, WIDTH / 2, HEIGHT / 2)
+    draw_text(screen, "WASD to move, Space to shoot, F for special weapon", 22, WIDTH / 2, HEIGHT / 2)
     draw_text(screen, "Press any key to start", 18, WIDTH / 2, HEIGHT * 3 / 4)
     pygame.display.flip()
     waiting = True
@@ -215,6 +261,8 @@ start_screen = pygame.image.load("Things/Pictures/background2.jpg")
 
 scream_sound = pygame.mixer.Sound("Things/Sounds/scream.wav")
 
+square = pygame.image.load("Things/Pictures/square.png")
+
 
 
 shield = 10
@@ -231,6 +279,8 @@ while running:
         bullets = pygame.sprite.Group()
         moblets = pygame.sprite.Group()
         specials = pygame.sprite.Group()
+        hammers = pygame.sprite.Group()
+        splashes = pygame.sprite.Group()
         player = Player()
         all_sprites.add(player)
         for i in range(6):
@@ -253,6 +303,8 @@ while running:
             if event.key == pygame.K_SPACE:
                 pygame.mixer.Sound.play(shoot_sound)
                 player.shoot()
+            if event.key == pygame.K_f:
+                player.throw()
 
     all_sprites.update()
 
@@ -273,6 +325,27 @@ while running:
         all_sprites.add(m)
         expl = Explosion(hit.rect.center, 'lg')
         all_sprites.add(expl)
+        all_sprites.update()
+        mobs.add(m)
+
+    hits = pygame.sprite.groupcollide(hammers, mobs, True, True)
+    for hit in hits:
+        pygame.mixer.Sound.play(kill_sound)
+        score += 1
+        m = Mob()
+        all_sprites.add(m)
+        splsh = Splash(hit.rect.center, 'lg')
+        all_sprites.add(splsh)
+        splashes.add(splsh)
+        all_sprites.update()
+        mobs.add(m)
+
+    hits = pygame.sprite.groupcollide(splashes, mobs, True, True)
+    for hit in hits:
+        pygame.mixer.Sound.play(kill_sound)
+        score += 1
+        m = Mob()
+        all_sprites.add(m)
         all_sprites.update()
         mobs.add(m)
 
